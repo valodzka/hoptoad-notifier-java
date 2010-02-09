@@ -4,10 +4,10 @@
 
 package code.lucamarrocco.hoptoad;
 
+import org.junit.*;
+
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-
-import org.junit.*;
 
 public class NoticeApi2XmlTest {
 
@@ -17,9 +17,12 @@ public class NoticeApi2XmlTest {
 		return string.replaceAll("\\\"", "");
 	}
 
-	@Before
+	@SuppressWarnings({"ThrowableInstanceNeverThrown"})
+  @Before
 	public void setUp() {
-		notice = new HoptoadNoticeBuilder("apiKey", new RuntimeException("errorMessage")).newNotice();
+    String env = "<blink>production</blink>";
+    HoptoadNoticeBuilder builder = new HoptoadNoticeBuilder("apiKey", new RuntimeException("errorMessage"), env);
+    notice = builder.newNotice();
 	}
 
 	@Test
@@ -76,6 +79,12 @@ public class NoticeApi2XmlTest {
 	public void testNotifierVersion() {
 		assertThat(xml(new NoticeApi2(notice)), containsString("<version>1.7-socrata-SNAPSHOT</version>"));
 	}
+
+  @Test
+  public void testEscapesAngleBrackets() throws Exception {
+    String actual = xml(new NoticeApi2(notice));
+    assertThat(actual, containsString("&lt;blink&gt;production&lt;/blink&gt;"));
+  }
 
 	private String xml(NoticeApi2 noticeApi) {
 		return clean(noticeApi.toString());

@@ -45,7 +45,7 @@ public class Backtrace implements Iterable<String> {
 			if (mustBeIgnored(string)) {
 				continue;
 			}
-      if (!string.matches("[^:]*:\\d+.*")) {
+      if (!ValidBacktrace.matches(string)) {
 				string = removeDobuleDot(string);
 			}
 			filteredBacktrace.add(string);
@@ -54,7 +54,7 @@ public class Backtrace implements Iterable<String> {
 		return filteredBacktrace;
 	}
 
-	protected void ignore() {
+  protected void ignore() {
 		ignoreEmptyCause();
 	}
 

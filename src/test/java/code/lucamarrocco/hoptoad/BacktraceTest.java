@@ -5,7 +5,7 @@
 package code.lucamarrocco.hoptoad;
 
 import static code.lucamarrocco.hoptoad.Exceptions.*;
-import static code.lucamarrocco.hoptoad.IsValidBacktrace.*;
+import static code.lucamarrocco.hoptoad.ValidBacktrace.*;
 import static code.lucamarrocco.hoptoad.Slurp.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -281,12 +281,13 @@ public class BacktraceTest {
 
 	@Test
 	public void testNotValidaBacktrace() {
-		assertThat("Caused by: java.lang.NullPointerException", is(not(validBacktrace())));
+    String string = "Caused by: java.lang.NullPointerException";
+    assertFalse(matches(string));
 	}
 
 	@Test
 	public void testValidaBacktrace() {
-		assertThat("at org.junit.internal.runners.TestMethod.invoke(TestMethod.java:59)", is(validBacktrace()));
-		assertThat("vendors/rails/actionpack/lib/action_controller/filter.rb:579:in `call_filters'", is(validBacktrace()));
+		assertTrue(matches("at org.junit.internal.runners.TestMethod.invoke(TestMethod.java:59)"));
+		assertTrue(matches("vendors/rails/actionpack/lib/action_controller/filter.rb:579:in `call_filters'"));
 	}
 }

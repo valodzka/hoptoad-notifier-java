@@ -90,17 +90,7 @@ public class NoticeApi2 {
 		tag("notifier");
 	}
 
-	private void notifier(String name, String version, String url) {
-		notifier();
-		{
-			name(name);
-			version(version);
-			url(url);
-		}
-		end("notifier");
-	}
-
-	private NoticeApi2 tag(String string) {
+  private NoticeApi2 tag(String string) {
 		append("<" + string + ">");
 		return this;
 	}
@@ -110,6 +100,11 @@ public class NoticeApi2 {
 	}
 
 	private NoticeApi2 text(String string) {
+    if (string != null) {
+      string = string.replaceAll("<", "&lt;");
+      string = string.replaceAll(">", "&gt;");
+    }
+
 		append(string);
 		return this;
 	}
