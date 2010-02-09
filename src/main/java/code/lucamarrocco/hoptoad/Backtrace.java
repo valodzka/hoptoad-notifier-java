@@ -4,9 +4,6 @@
 
 package code.lucamarrocco.hoptoad;
 
-import static code.lucamarrocco.hoptoad.IsValidBacktrace.*;
-import static org.hamcrest.Matchers.*;
-
 import java.text.*;
 import java.util.*;
 
@@ -48,7 +45,7 @@ public class Backtrace implements Iterable<String> {
 			if (mustBeIgnored(string)) {
 				continue;
 			}
-			if (not(validBacktrace()).matches(string)) {
+      if (!string.matches("[^:]*:\\d+.*")) {
 				string = removeDobuleDot(string);
 			}
 			filteredBacktrace.add(string);
