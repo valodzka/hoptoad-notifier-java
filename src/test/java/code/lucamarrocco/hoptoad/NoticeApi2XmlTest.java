@@ -11,14 +11,13 @@ import static org.junit.Assert.*;
 
 public class NoticeApi2XmlTest {
 
-	private HoptoadNotice notice;
+  private HoptoadNoticeBuilder builder;
 
-	@SuppressWarnings({"ThrowableInstanceNeverThrown"})
+  @SuppressWarnings({"ThrowableInstanceNeverThrown"})
   @Before
 	public void setUp() {
     String env = "<blink>production</blink>";
-    HoptoadNoticeBuilder builder = new HoptoadNoticeBuilder("apiKey", new RuntimeException("errorMessage"), env);
-    notice = builder.newNotice();
+    builder = new HoptoadNoticeBuilder("apiKey", new RuntimeException("errorMessage"), env);
 	}
 
 	@Test
@@ -78,11 +77,12 @@ public class NoticeApi2XmlTest {
 
   @Test
   public void testEscapesAngleBrackets() throws Exception {
-    String actual = xml();
-    assertThat(actual, containsString("&lt;blink&gt;production&lt;/blink&gt;"));
+    assertThat(xml(), containsString("&lt;blink&gt;production&lt;/blink&gt;"));
   }
 
   private String xml() {
-    return new NoticeApi2(notice).toString();
+    HoptoadNotice notice = builder.newNotice();
+    NoticeApi2 noticeApi2 = new NoticeApi2(notice);
+    return noticeApi2.toString();
   }
 }
