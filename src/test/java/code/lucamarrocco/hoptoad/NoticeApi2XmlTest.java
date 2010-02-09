@@ -10,16 +10,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 public class NoticeApi2XmlTest {
-
-  private HoptoadNoticeBuilder builder;
-
-  @SuppressWarnings({"ThrowableInstanceNeverThrown"})
-  @Before
-	public void setUp() {
-    String env = "<blink>production</blink>";
-    builder = new HoptoadNoticeBuilder("apiKey", new RuntimeException("errorMessage"), env);
-	}
-
 	@Test
 	public void testApiKey() {
 		assertThat(xml(), containsString("<api-key>apiKey</api-key>"));
@@ -80,7 +70,14 @@ public class NoticeApi2XmlTest {
     assertThat(xml(), containsString("&lt;blink&gt;production&lt;/blink&gt;"));
   }
 
+  @SuppressWarnings({"ThrowableInstanceNeverThrown"})
   private String xml() {
+    String env = "<blink>production</blink>";
+    HoptoadNoticeBuilder builder = new HoptoadNoticeBuilder("apiKey", new RuntimeException("errorMessage"), env);
+    return xml(builder);
+  }
+
+  private String xml(HoptoadNoticeBuilder builder) {
     HoptoadNotice notice = builder.newNotice();
     NoticeApi2 noticeApi2 = new NoticeApi2(notice);
     return noticeApi2.toString();
