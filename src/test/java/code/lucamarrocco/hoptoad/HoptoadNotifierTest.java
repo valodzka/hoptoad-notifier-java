@@ -26,6 +26,8 @@ public class HoptoadNotifierTest {
 
 	private HoptoadNotifier notifier;
 
+  private static final int RATE_LIMITED_RESPONSE = 503;
+
   private <T> Matcher<T> internalServerError() {
 		return new BaseMatcher<T>() {
 			public void describeTo(final Description description) {
@@ -36,14 +38,6 @@ public class HoptoadNotifierTest {
 				return item.equals(500);
 			}
 		};
-	}
-
-	private int notifing(final String string) {
-		return new HoptoadNotifier().notify(new HoptoadNoticeBuilder(TestAccount.KEY, ERROR_MESSAGE) {
-			{
-				backtrace(new Backtrace(asList(string)));
-			}
-		}.newNotice());
 	}
 
 	@Before
@@ -57,12 +51,12 @@ public class HoptoadNotifierTest {
 	}
 
 	@Test
-	public void testHowBacktraceHoptoadNotInternalServerError() {
-		assertThat(notifing(ERROR_MESSAGE), not(internalServerError()));
-		assertThat(notifing("java.lang.RuntimeException: an expression is not valid"), not(internalServerError()));
-		assertThat(notifing("Caused by: java.lang.NullPointerException"), not(internalServerError()));
-		assertThat(notifing("at code.lucamarrocco.notifier.Exceptions.newException(Exceptions.java:11)"), not(internalServerError()));
-		assertThat(notifing("... 23 more"), not(internalServerError()));
+	public void testHowBacktraceHoptoadNotInternalServerError() throws InterruptedException {
+		assertNoticeWithBacktraceReturnsSuccess(ERROR_MESSAGE);
+		assertNoticeWithBacktraceReturnsSuccess("java.lang.RuntimeException: an expression is not valid");
+		assertNoticeWithBacktraceReturnsSuccess("Caused by: java.lang.NullPointerException");
+		assertNoticeWithBacktraceReturnsSuccess("at code.lucamarrocco.notifier.Exceptions.newException(Exceptions.java:11)");
+		assertNoticeWithBacktraceReturnsSuccess("... 23 more");
 	}
 
 	@Test
@@ -88,14 +82,14 @@ public class HoptoadNotifierTest {
 	}
 
 	@Test
-	public void testNotifyToHoptoadUsingBuilderNoticeFromExceptionInEnv() {
+	public void testNotifyToHoptoadUsingBuilderNoticeFromExceptionInEnv() throws InterruptedException {
     final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, newException(ERROR_MESSAGE), "test").newNotice();
 
-		assertThat(notifier.notify(notice), is(200));
-	}
+    assertNoticeReturnsSuccess(notice);
+  }
 
 	@Test
-	public void testNotifyToHoptoadUsingBuilderAndSessionVars() {
+	public void testNotifyToHoptoadUsingBuilderAndSessionVars() throws InterruptedException {
     final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, newException(ERROR_MESSAGE), "test") {
       {
         setRequest("http://localhost:3000/", "controller");
@@ -105,11 +99,11 @@ public class HoptoadNotifierTest {
       }
     }.newNotice();
 
-		assertThat(notifier.notify(notice), is(200));
-	}
+    assertNoticeReturnsSuccess(notice);
+  }
 
 	@Test
-	public void testNotifyToHoptoadUsingBuilderNoticeFromExceptionInEnvAndSystemProperties() {
+	public void testNotifyToHoptoadUsingBuilderNoticeFromExceptionInEnvAndSystemProperties() throws InterruptedException {
 		final Exception EXCEPTION = newException(ERROR_MESSAGE);
 		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, EXCEPTION, "test") {
 			{
@@ -118,74 +112,103 @@ public class HoptoadNotifierTest {
 
 		}.newNotice();
 
-		assertThat(notifier.notify(notice), is(200));
-	}
+    assertNoticeReturnsSuccess(notice);
+  }
 
 	@Test
-	public void testNotifyToHoptoadUsingBuilderNoticeInEnv() {
+	public void testNotifyToHoptoadUsingBuilderNoticeInEnv() throws InterruptedException {
 		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, ERROR_MESSAGE, "test").newNotice();
 
-		assertThat(notifier.notify(notice), is(200));
-	}
+    assertNoticeReturnsSuccess(notice);
+  }
 
 	@Test
-	public void testSendExceptionNoticeWithFilteredBacktrace() {
+	public void testSendExceptionNoticeWithFilteredBacktrace() throws InterruptedException {
 		final Exception EXCEPTION = newException(ERROR_MESSAGE);
 		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, new QuietRubyBacktrace(), EXCEPTION, "test").newNotice();
 
-		assertThat(notifier.notify(notice), is(200));
-	}
+    assertNoticeReturnsSuccess(notice);
+  }
 
 	@Test
-	public void testSendExceptionToHoptoad() {
+	public void testSendExceptionToHoptoad() throws InterruptedException {
 		final Exception EXCEPTION = newException(ERROR_MESSAGE);
 		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, EXCEPTION).newNotice();
 
-		assertThat(notifier.notify(notice), is(200));
-	}
+    assertNoticeReturnsSuccess(notice);
+  }
 
 	@Test
-	public void testSendExceptionToHoptoadUsingRubyBacktrace() {
+	public void testSendExceptionToHoptoadUsingRubyBacktrace() throws InterruptedException {
 		final Exception EXCEPTION = newException(ERROR_MESSAGE);
 		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, new RubyBacktrace(), EXCEPTION, "test").newNotice();
 
-		assertThat(notifier.notify(notice), is(200));
-	}
+    assertNoticeReturnsSuccess(notice);
+  }
 
-	@Test
-	public void testSendExceptionToHoptoadUsingRubyBacktraceAndFilteredSystemProperties() {
+  @Test
+	public void testSendExceptionToHoptoadUsingRubyBacktraceAndFilteredSystemProperties() throws InterruptedException {
 		final Exception EXCEPTION = newException(ERROR_MESSAGE);
 		final HoptoadNotice notice = new HoptoadNoticeBuilderUsingFilterdSystemProperties(TestAccount.KEY, new RubyBacktrace(), EXCEPTION, "test").newNotice();
 
-		assertThat(notifier.notify(notice), is(200));
-	}
+    assertNoticeReturnsSuccess(notice);
+  }
 
 	@Test
-	public void testSendNoticeToHoptoad() {
+	public void testSendNoticeToHoptoad() throws InterruptedException {
 		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, ERROR_MESSAGE).newNotice();
 
-		assertThat(notifier.notify(notice), is(200));
-	}
+    assertNoticeReturnsSuccess(notice);
+  }
 
 	@Test
-	public void testSendNoticeWithFilteredBacktrace() {
+	public void testSendNoticeWithFilteredBacktrace() throws InterruptedException {
 		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, ERROR_MESSAGE) {
 			{
 				backtrace(new QuietRubyBacktrace(strings(slurp(read("backtrace.txt")))));
 			}
 		}.newNotice();
 
-		assertThat(notifier.notify(notice), is(200));
-	}
+    assertNoticeReturnsSuccess(notice);
+  }
 
 	@Test
-	public void testSendNoticeWithLargeBacktrace() {
+	public void testSendNoticeWithLargeBacktrace() throws InterruptedException {
 		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, ERROR_MESSAGE) {
 			{
 				backtrace(new Backtrace(strings(slurp(read("backtrace.txt")))));
 			}
 		}.newNotice();
 
-		assertThat(notifier.notify(notice), is(200));
-	}
+    assertNoticeReturnsSuccess(notice);
+  }
+
+  private void assertNoticeWithBacktraceReturnsSuccess(final String backtraceLine) throws InterruptedException {
+    HoptoadNoticeBuilder builder = new HoptoadNoticeBuilder(TestAccount.KEY, ERROR_MESSAGE) {
+      {
+        backtrace(new Backtrace(asList(backtraceLine)));
+      }
+    };
+
+    assertNoticeReturnsSuccess(builder.newNotice());
+  }
+
+  private void assertNoticeReturnsSuccess(HoptoadNotice notice) throws InterruptedException {
+    int attempts = 5;
+    int secondsToWait = 20;
+
+    while (true) {
+      assertTrue("hoptoadapp.com returned failure after multiple attempts", attempts > 0);
+
+      int response = notifier.notify(notice);
+      if (response == RATE_LIMITED_RESPONSE) {
+        System.err.println("hoptoadapp.com returned rate limited response, waiting " + secondsToWait + " seconds...");
+        Thread.sleep(secondsToWait * 1000);
+        attempts--;
+      } else {
+        assertThat(response, is(200));
+        break;
+      }
+    }
+  }
 }
