@@ -7,7 +7,7 @@ package code.lucamarrocco.hoptoad;
 import java.io.*;
 import java.net.*;
 
-public class HoptoadNotifier implements HoptoadNotify {
+public class HoptoadNotifier {
 
 	private void addingProperties(final HttpURLConnection connection) throws ProtocolException {
 		connection.setDoOutput(true);

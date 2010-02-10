@@ -24,7 +24,7 @@ public class HoptoadNotifierTest {
 
 	private final Map<String, Object> EC2 = new HashMap<String, Object>();
 
-	private HoptoadNotify notifier;
+	private HoptoadNotifier notifier;
 
   private <T> Matcher<T> internalServerError() {
 		return new BaseMatcher<T>() {
@@ -53,7 +53,7 @@ public class HoptoadNotifierTest {
 		EC2.put("EC2_PRIVATE_KEY", "EC2_PRIVATE_KEY");
 		EC2.put("AWS_ACCESS", "AWS_ACCESS");
 		EC2.put("EC2_CERT", "EC2_CERT");
-		notifier = new HoptoadNotifierV2();
+		notifier = new HoptoadNotifier();
 	}
 
 	@Test
