@@ -6,15 +6,13 @@ package code.lucamarrocco.hoptoad;
 
 import org.junit.*;
 
-import java.util.*;
-
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 public class NoticeApi2XmlTest {
   @Test
 	public void testApiKey() {
-		assertThat(xml(), containsString("<api-key>" + TestAccount.KEY + "</api-key>"));
+		assertThat(xml(), containsString("<api-key>" + HoptoadNotifierTest.KEY + "</api-key>"));
 	}
 
   @Test
@@ -74,17 +72,18 @@ public class NoticeApi2XmlTest {
 
   @Test
   public void testSendsRequest() throws Exception {
-    HoptoadNoticeBuilder builder = new HoptoadNoticeBuilder(TestAccount.KEY, newThrowable()) {
+    HoptoadNoticeBuilder builder = new HoptoadNoticeBuilder(HoptoadNotifierTest.KEY, newThrowable()) {
       {
         setRequest("http://example.com", "carburetor");
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("color", "orange");
-        map.put("lights", "<blink>");
-        session(map);
+        addSessionKey("lights", "<blink>");
+        addSessionKey("color", "orange");
       }
     };
 
-    String expected = "<request><url>http://example.com</url><component>carburetor</component><session><var key=\"color\">orange</var><var key=\"lights\">&lt;blink&gt;</var></session>";
+    String expected = "<request>" +
+        "<url>http://example.com</url>" +
+        "<component>carburetor</component>" +
+        "<session><var key=\"color\">orange</var><var key=\"lights\">&lt;blink&gt;</var></session>";
     assertThat(xml(builder), containsString(expected));
   }
 
@@ -95,7 +94,7 @@ public class NoticeApi2XmlTest {
   @SuppressWarnings({"ThrowableInstanceNeverThrown"})
   private String xml() {
     String env = "<blink>production</blink>";
-    HoptoadNoticeBuilder builder = new HoptoadNoticeBuilder(TestAccount.KEY, newThrowable(), env);
+    HoptoadNoticeBuilder builder = new HoptoadNoticeBuilder(HoptoadNotifierTest.KEY, newThrowable(), env);
     return xml(builder);
   }
 

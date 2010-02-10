@@ -66,10 +66,14 @@ public class HoptoadNoticeBuilder {
 		this.apiKey = apiKey;
 	}
 
-  public void setRequest(String url, String component) {
+  protected void setRequest(String url, String component) {
     hasRequest = true;
     this.url = url;
     this.component = component;
+  }
+
+  protected void addSessionKey(String key, Object value) {
+    session.put(key, value);
   }
 
   /** An array where each element is a line of the backtrace (required, but can be empty). */
@@ -148,7 +152,7 @@ public class HoptoadNoticeBuilder {
 		this.session.putAll(session);
 	}
 
-	protected void standardEnvironmentFilters() {
+  protected void standardEnvironmentFilters() {
 		environmentFilter("java.awt.*");
 		environmentFilter("java.vendor.*");
 		environmentFilter("java.class.path");

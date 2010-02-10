@@ -5,10 +5,7 @@
 package code.lucamarrocco.hoptoad;
 
 import org.apache.commons.logging.*;
-import org.hamcrest.*;
 import org.junit.*;
-
-import java.util.*;
 
 import static code.lucamarrocco.hoptoad.Exceptions.*;
 import static code.lucamarrocco.hoptoad.Slurp.*;
@@ -18,35 +15,15 @@ import static org.junit.Assert.*;
 
 public class HoptoadNotifierTest {
 
-  protected static final Map<String, Object> ENVIRONMENT = new HashMap<String, Object>();
-
 	private final Log logger = LogFactory.getLog(getClass());
-
-	private final Map<String, Object> EC2 = new HashMap<String, Object>();
 
 	private HoptoadNotifier notifier;
 
   private static final int RATE_LIMITED_RESPONSE = 503;
+  public static final String KEY = "3fff67b74d12fa2f1ae0e4c885ba7b9e";
 
-  private <T> Matcher<T> internalServerError() {
-		return new BaseMatcher<T>() {
-			public void describeTo(final Description description) {
-				description.appendText("internal server error");
-			}
-
-			public boolean matches(final Object item) {
-				return item.equals(500);
-			}
-		};
-	}
-
-	@Before
+  @Before
 	public void setUp() {
-		ENVIRONMENT.put("A_KEY", "test");
-		EC2.put("AWS_SECRET", "AWS_SECRET");
-		EC2.put("EC2_PRIVATE_KEY", "EC2_PRIVATE_KEY");
-		EC2.put("AWS_ACCESS", "AWS_ACCESS");
-		EC2.put("EC2_CERT", "EC2_CERT");
 		notifier = new HoptoadNotifier();
 	}
 
@@ -83,19 +60,17 @@ public class HoptoadNotifierTest {
 
 	@Test
 	public void testNotifyToHoptoadUsingBuilderNoticeFromExceptionInEnv() throws InterruptedException {
-    final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, newException(ERROR_MESSAGE), "test").newNotice();
+    final HoptoadNotice notice = new HoptoadNoticeBuilder(KEY, newException(ERROR_MESSAGE), "test").newNotice();
 
     assertNoticeReturnsSuccess(notice);
   }
 
 	@Test
 	public void testNotifyToHoptoadUsingBuilderAndSessionVars() throws InterruptedException {
-    final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, newException(ERROR_MESSAGE), "test") {
+    final HoptoadNotice notice = new HoptoadNoticeBuilder(KEY, newException(ERROR_MESSAGE), "test") {
       {
         setRequest("http://localhost:3000/", "controller");
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("color", "orange");
-        session(map);
+        addSessionKey("color", "orange");
       }
     }.newNotice();
 
@@ -105,11 +80,10 @@ public class HoptoadNotifierTest {
 	@Test
 	public void testNotifyToHoptoadUsingBuilderNoticeFromExceptionInEnvAndSystemProperties() throws InterruptedException {
 		final Exception EXCEPTION = newException(ERROR_MESSAGE);
-		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, EXCEPTION, "test") {
+		final HoptoadNotice notice = new HoptoadNoticeBuilder(KEY, EXCEPTION, "test") {
 			{
 				filteredSystemProperties();
 			}
-
 		}.newNotice();
 
     assertNoticeReturnsSuccess(notice);
@@ -117,7 +91,7 @@ public class HoptoadNotifierTest {
 
 	@Test
 	public void testNotifyToHoptoadUsingBuilderNoticeInEnv() throws InterruptedException {
-		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, ERROR_MESSAGE, "test").newNotice();
+		final HoptoadNotice notice = new HoptoadNoticeBuilder(KEY, ERROR_MESSAGE, "test").newNotice();
 
     assertNoticeReturnsSuccess(notice);
   }
@@ -125,7 +99,7 @@ public class HoptoadNotifierTest {
 	@Test
 	public void testSendExceptionNoticeWithFilteredBacktrace() throws InterruptedException {
 		final Exception EXCEPTION = newException(ERROR_MESSAGE);
-		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, new QuietRubyBacktrace(), EXCEPTION, "test").newNotice();
+		final HoptoadNotice notice = new HoptoadNoticeBuilder(KEY, new QuietRubyBacktrace(), EXCEPTION, "test").newNotice();
 
     assertNoticeReturnsSuccess(notice);
   }
@@ -133,7 +107,7 @@ public class HoptoadNotifierTest {
 	@Test
 	public void testSendExceptionToHoptoad() throws InterruptedException {
 		final Exception EXCEPTION = newException(ERROR_MESSAGE);
-		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, EXCEPTION).newNotice();
+		final HoptoadNotice notice = new HoptoadNoticeBuilder(KEY, EXCEPTION).newNotice();
 
     assertNoticeReturnsSuccess(notice);
   }
@@ -141,7 +115,7 @@ public class HoptoadNotifierTest {
 	@Test
 	public void testSendExceptionToHoptoadUsingRubyBacktrace() throws InterruptedException {
 		final Exception EXCEPTION = newException(ERROR_MESSAGE);
-		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, new RubyBacktrace(), EXCEPTION, "test").newNotice();
+		final HoptoadNotice notice = new HoptoadNoticeBuilder(KEY, new RubyBacktrace(), EXCEPTION, "test").newNotice();
 
     assertNoticeReturnsSuccess(notice);
   }
@@ -149,21 +123,21 @@ public class HoptoadNotifierTest {
   @Test
 	public void testSendExceptionToHoptoadUsingRubyBacktraceAndFilteredSystemProperties() throws InterruptedException {
 		final Exception EXCEPTION = newException(ERROR_MESSAGE);
-		final HoptoadNotice notice = new HoptoadNoticeBuilderUsingFilterdSystemProperties(TestAccount.KEY, new RubyBacktrace(), EXCEPTION, "test").newNotice();
+		final HoptoadNotice notice = new HoptoadNoticeBuilderUsingFilteredSystemProperties(KEY, new RubyBacktrace(), EXCEPTION, "test").newNotice();
 
     assertNoticeReturnsSuccess(notice);
   }
 
 	@Test
 	public void testSendNoticeToHoptoad() throws InterruptedException {
-		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, ERROR_MESSAGE).newNotice();
+		final HoptoadNotice notice = new HoptoadNoticeBuilder(KEY, ERROR_MESSAGE).newNotice();
 
     assertNoticeReturnsSuccess(notice);
   }
 
 	@Test
 	public void testSendNoticeWithFilteredBacktrace() throws InterruptedException {
-		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, ERROR_MESSAGE) {
+		final HoptoadNotice notice = new HoptoadNoticeBuilder(KEY, ERROR_MESSAGE) {
 			{
 				backtrace(new QuietRubyBacktrace(strings(slurp(read("backtrace.txt")))));
 			}
@@ -174,7 +148,7 @@ public class HoptoadNotifierTest {
 
 	@Test
 	public void testSendNoticeWithLargeBacktrace() throws InterruptedException {
-		final HoptoadNotice notice = new HoptoadNoticeBuilder(TestAccount.KEY, ERROR_MESSAGE) {
+		final HoptoadNotice notice = new HoptoadNoticeBuilder(KEY, ERROR_MESSAGE) {
 			{
 				backtrace(new Backtrace(strings(slurp(read("backtrace.txt")))));
 			}
@@ -184,7 +158,7 @@ public class HoptoadNotifierTest {
   }
 
   private void assertNoticeWithBacktraceReturnsSuccess(final String backtraceLine) throws InterruptedException {
-    HoptoadNoticeBuilder builder = new HoptoadNoticeBuilder(TestAccount.KEY, ERROR_MESSAGE) {
+    HoptoadNoticeBuilder builder = new HoptoadNoticeBuilder(KEY, ERROR_MESSAGE) {
       {
         backtrace(new Backtrace(asList(backtraceLine)));
       }

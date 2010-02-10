@@ -16,7 +16,7 @@ public class HoptoadNotifier {
 		connection.setRequestMethod("POST");
 	}
 
-	private HttpURLConnection createConnection() throws IOException, MalformedURLException {
+	private HttpURLConnection createConnection() throws IOException {
 		final HttpURLConnection connection = (HttpURLConnection) new URL("http://hoptoadapp.com/notifier_api/v2/notices").openConnection();
 		return connection;
 	}
