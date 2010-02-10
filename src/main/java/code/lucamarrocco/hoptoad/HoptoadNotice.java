@@ -4,9 +4,9 @@
 
 package code.lucamarrocco.hoptoad;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
+
+import static java.util.Arrays.*;
 
 public class HoptoadNotice {
 
@@ -26,14 +26,23 @@ public class HoptoadNotice {
 
 	private String errorClass;
 
-	public HoptoadNotice(final String apiKey, final String errorMessage, String errorClass, final Backtrace backtrace, final Map<String, Object> request, final Map<String, Object> session, final Map<String, Object> environment, final List<String> environmentFilters) {
+  private boolean hasRequest = false;
+
+  private final String url;
+
+  private final String component;
+
+  public HoptoadNotice(final String apiKey, final String errorMessage, String errorClass, final Backtrace backtrace, final Map<String, Object> request, final Map<String, Object> session, final Map<String, Object> environment, final List<String> environmentFilters, boolean hasRequest, String url, String component) {
 		this.apiKey = apiKey;
 		this.errorClass = errorClass;
 		this.errorMessage = errorMessage;
 		this.backtrace = backtrace;
 		this.request = request;
 		this.session = session;
-		filter(environment, environmentFilters);
+    this.hasRequest = hasRequest;
+    this.url = url;
+    this.component = component;
+    filter(environment, environmentFilters);
 	}
 
 	public String apiKey() {
@@ -82,4 +91,16 @@ public class HoptoadNotice {
 	public Map<String, Object> session() {
 		return session;
 	}
+
+  public boolean hasRequest() {
+    return hasRequest;
+  }
+
+  public String url() {
+    return url;
+  }
+
+  public String component() {
+    return component;
+  }
 }

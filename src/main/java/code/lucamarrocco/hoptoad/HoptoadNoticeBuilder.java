@@ -4,9 +4,9 @@
 
 package code.lucamarrocco.hoptoad;
 
-import static java.util.Arrays.*;
-
 import java.util.*;
+
+import static java.util.Arrays.*;
 
 public class HoptoadNoticeBuilder {
 
@@ -28,44 +28,56 @@ public class HoptoadNoticeBuilder {
 
 	private String errorClass;
 
-	public HoptoadNoticeBuilder(final String apiKey, final Backtrace backtraceBuilder, final Throwable throwable, final String env) {
+  private boolean hasRequest = false;
+  
+  private String url;
+
+  private String component;
+
+  public HoptoadNoticeBuilder(final String apiKey, final Backtrace backtraceBuilder, final Throwable throwable, final String env) {
 		this(apiKey, throwable.getMessage(), env);
 		this.backtraceBuilder = backtraceBuilder;
 		errorClass(throwable);
 		backtrace(throwable);
 	}
 
-	public HoptoadNoticeBuilder(final String apiKey, final String errorMessage) {
-		this(apiKey, errorMessage, "test");
-	}
+  public HoptoadNoticeBuilder(final String apiKey, final String errorMessage) {
+    this(apiKey, errorMessage, "test");
+  }
 
-	public HoptoadNoticeBuilder(final String apiKey, final String errorMessage, final String env) {
+  public HoptoadNoticeBuilder(final String apiKey, final String errorMessage, final String env) {
 		apiKey(apiKey);
 		errorMessage(errorMessage);
 		env(env);
 	}
 
-	public HoptoadNoticeBuilder(final String apiKey, final Throwable throwable) {
+  public HoptoadNoticeBuilder(final String apiKey, final Throwable throwable) {
 		this(apiKey, new Backtrace(), throwable, "test");
 	}
 
-	public HoptoadNoticeBuilder(final String apiKey, final Throwable throwable, final String env) {
+  public HoptoadNoticeBuilder(final String apiKey, final Throwable throwable, final String env) {
 		this(apiKey, new Backtrace(), throwable, env);
 	}
 
-	private void apiKey(final String apiKey) {
+  private void apiKey(final String apiKey) {
 		if (notDefined(apiKey)) {
 			error("The API key for the project this error is from (required). Get this from the project's page in Hoptoad.");
 		}
 		this.apiKey = apiKey;
 	}
 
-	/** An array where each element is a line of the backtrace (required, but can be empty). */
+  public void setRequest(String url, String component) {
+    hasRequest = true;
+    this.url = url;
+    this.component = component;
+  }
+
+  /** An array where each element is a line of the backtrace (required, but can be empty). */
 	protected void backtrace(final Backtrace backtrace) {
 		this.backtrace = backtrace;
 	}
 
-	private void backtrace(final Throwable throwable) {
+  private void backtrace(final Throwable throwable) {
 		backtrace(backtraceBuilder.newBacktrace(throwable));
 	}
 
@@ -119,7 +131,7 @@ public class HoptoadNoticeBuilder {
 	}
 
 	public HoptoadNotice newNotice() {
-		return new HoptoadNotice(apiKey, errorMessage, errorClass, backtrace, request, session, environment, environmentFilters);
+		return new HoptoadNotice(apiKey, errorMessage, errorClass, backtrace, request, session, environment, environmentFilters, hasRequest, url, component);
 	}
 
 	private boolean notDefined(final Object object) {

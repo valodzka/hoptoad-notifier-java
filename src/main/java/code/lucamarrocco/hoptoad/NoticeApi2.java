@@ -4,6 +4,8 @@
 
 package code.lucamarrocco.hoptoad;
 
+import java.util.*;
+
 public class NoticeApi2 {
 
 	private final StringBuilder stringBuilder = new StringBuilder();
@@ -36,16 +38,47 @@ public class NoticeApi2 {
 			}
 			end("error");
 
+      if (notice.hasRequest()) {
+        addRequest(notice);
+      }
+
       server_environment();
       {
         tag("environment-name", notice.env());
       }
-      end("server_environment");
+      end("server-environment");
 		}
 		end("notice");
 	}
 
-	private void apikey(HoptoadNotice notice) {
+  private void addRequest(HoptoadNotice notice) {
+    request();
+    {
+      tag("url", notice.url());
+      tag("component", notice.component());
+      session();
+      {
+        Map<String,Object> session = notice.session();
+        for (String key : session.keySet()) {
+          append("<var key=\"" + key + "\">");
+          text(session.get(key).toString());
+          append("</var>");
+        }
+      }
+      end("session");
+    }
+    end("request");
+  }
+
+  private void session() {
+    tag("session");
+  }
+
+  private void request() {
+    tag("request");
+  }
+
+  private void apikey(HoptoadNotice notice) {
 		tag("api-key");
 		{
 			append(notice.apiKey());
@@ -95,8 +128,8 @@ public class NoticeApi2 {
 		return this;
 	}
 
-	private void tag(String string, String name2) {
-		tag(string).text(name2).end(string);
+	private void tag(String string, String contents) {
+		tag(string).text(contents).end(string);
 	}
 
 	private NoticeApi2 text(String string) {
