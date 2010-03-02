@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.apache.commons.lang.exception.*;
 import org.junit.*;
+import java.util.regex.*;
 
 public class BacktraceTest {
 
@@ -33,6 +34,15 @@ public class BacktraceTest {
 
 		assertThat(backtrace, hasItem("at code.lucamarrocco.hoptoad.Exceptions.java:15:in `newException'"));
 	}
+	
+	@Test
+	public void testEscapesExceptionClassName() {
+        try {
+            new Backtrace(new Exception("com.banana.MyClass{junk}"));
+        } catch (PatternSyntaxException e) {
+            fail("Throwing a pattern syntax exception means the class name might not have been escaped properly");
+        }
+    }
 
 	@Test
 	public void testExceptionToRubyBacktrace$UsingNewRubyBacktraceEmptyInstanceAsFactoryOfRubyBacktrace() {

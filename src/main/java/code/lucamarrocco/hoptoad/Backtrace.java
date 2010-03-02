@@ -6,6 +6,7 @@ package code.lucamarrocco.hoptoad;
 
 import java.text.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Backtrace implements Iterable<String> {
 
@@ -25,7 +26,7 @@ public class Backtrace implements Iterable<String> {
 
 	public Backtrace(final Throwable throwable) {
 		toBacktrace(throwable);
-		ignore(".*" + messageIn(throwable) + ".*");
+		ignore(".*" + Pattern.quote(messageIn(throwable)) + ".*");
 		ignore();
 		filter();
 	}

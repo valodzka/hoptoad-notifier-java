@@ -20,7 +20,7 @@ public class HoptoadNotifierTest {
 	private HoptoadNotifier notifier;
 
   private static final int RATE_LIMITED_RESPONSE = 503;
-  public static final String KEY = "3fff67b74d12fa2f1ae0e4c885ba7b9e";
+  public static final String KEY = "a7bad952a319d10540fbbd64b597260d";
 
   @Before
 	public void setUp() {
