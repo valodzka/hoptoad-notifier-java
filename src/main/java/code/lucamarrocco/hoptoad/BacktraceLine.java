@@ -26,7 +26,7 @@ public class BacktraceLine {
         else {
             className = classAndMethodName;
         }
-		fileName = line.replaceAll("^.*\\(", "").replaceAll(":.*", "");
+		fileName = escapeSpecialChars(line.replaceAll("^.*\\(", "").replaceAll(":.*", ""));
 		lineNumber = lineNumber(line);
 		methodName = classAndMethodName.substring(classAndMethodName.lastIndexOf(".") + 1);
 	}
@@ -64,6 +64,12 @@ public class BacktraceLine {
 
 	private String toBacktrace(final String className, final String fileName, final int lineNumber, final String methodName) {
 		return format("at {0}.{1}({2}:{3})", className, methodName, fileName, lineNumber);
+	}
+	
+	private String escapeSpecialChars(final String str) {
+		return str.replaceAll("&", "&amp;")
+					.replaceAll("<", "&lt;")
+					.replaceAll(">", "&gt;");
 	}
 
 	@Override
