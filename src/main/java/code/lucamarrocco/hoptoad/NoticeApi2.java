@@ -58,22 +58,24 @@ public class NoticeApi2 {
     {
       tag("url", notice.url());
       tag("component", notice.component());
-      session();
-      {
-        Map<String,Object> session = notice.session();
-        for (String key : session.keySet()) {
-          append("<var key=\"" + key + "\">");
-          text(session.get(key).toString());
-          append("</var>");
-        }
-      }
-      end("session");
+      session(notice);
     }
     end("request");
   }
 
-  private void session() {
-    tag("session");
+  private void session(HoptoadNotice notice) {
+      Map<String,Object> session = notice.session();
+      if (session.isEmpty()) {
+          return;
+      }
+      
+      tag("session");
+      for (String key : session.keySet()) {
+          append("<var key=\"" + key + "\">");
+          text(session.get(key).toString());
+          append("</var>");
+      }
+      end("session");
   }
 
   private void request() {
