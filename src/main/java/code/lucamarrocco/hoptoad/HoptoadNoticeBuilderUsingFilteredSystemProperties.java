@@ -4,9 +4,9 @@
 
 package code.lucamarrocco.hoptoad;
 
-import org.apache.log4j.*;
+import java.util.Map;
 
-import java.util.*;
+import org.apache.log4j.MDC;
 
 public class HoptoadNoticeBuilderUsingFilteredSystemProperties extends HoptoadNoticeBuilder {
 
@@ -22,8 +22,10 @@ public class HoptoadNoticeBuilderUsingFilteredSystemProperties extends HoptoadNo
     ec2EnvironmentFilters();
   }
 
-  private void addMDCToSession() {
+private void addMDCToSession() {
+    @SuppressWarnings("unchecked")
     Map<String, Object> map = MDC.getContext();
+    
     if (map != null) {
       addSessionKey(":key", Integer.toString(map.hashCode()));
       addSessionKey(":data", map);

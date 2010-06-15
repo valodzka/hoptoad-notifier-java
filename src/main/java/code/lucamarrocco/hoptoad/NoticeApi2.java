@@ -5,6 +5,7 @@
 package code.lucamarrocco.hoptoad;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -58,24 +59,25 @@ public class NoticeApi2 {
     {
       tag("url", notice.url());
       tag("component", notice.component());
-      session(notice);
+      vars("params", notice.request());
+      vars("session", notice.session());
+      vars("cgi-data", notice.environment());
     }
     end("request");
   }
 
-  private void session(HoptoadNotice notice) {
-      Map<String,Object> session = notice.session();
-      if (session.isEmpty()) {
+  private void vars(String sectionName, Map<String,Object> vars) {
+      if (vars.isEmpty()) {
           return;
       }
       
-      tag("session");
-      for (String key : session.keySet()) {
-          append("<var key=\"" + key + "\">");
-          text(session.get(key).toString());
+      tag(sectionName);
+      for (Entry<String, Object> var : vars.entrySet()) {
+          append("<var key=\"" + var.getKey() + "\">");
+          text(var.getValue().toString());
           append("</var>");
       }
-      end("session");
+      end(sectionName);
   }
 
   private void request() {

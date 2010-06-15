@@ -4,17 +4,25 @@
 
 package code.lucamarrocco.hoptoad;
 
-import static code.lucamarrocco.hoptoad.Exceptions.*;
-import static code.lucamarrocco.hoptoad.ValidBacktrace.*;
-import static code.lucamarrocco.hoptoad.Slurp.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static code.lucamarrocco.hoptoad.Exceptions.ERROR_MESSAGE;
+import static code.lucamarrocco.hoptoad.Exceptions.newException;
+import static code.lucamarrocco.hoptoad.Slurp.read;
+import static code.lucamarrocco.hoptoad.Slurp.slurp;
+import static code.lucamarrocco.hoptoad.Slurp.strings;
+import static code.lucamarrocco.hoptoad.ValidBacktrace.matches;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.util.*;
+import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang.exception.*;
-import org.junit.*;
-import java.util.regex.*;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.junit.Test;
 
 public class BacktraceTest {
 

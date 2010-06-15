@@ -4,13 +4,20 @@
 
 package code.lucamarrocco.hoptoad;
 
-import java.util.*;
+import static java.util.Arrays.asList;
 
-import static java.util.Arrays.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 public class HoptoadNoticeBuilder {
 
 	private String apiKey;
+	
+	private String environmentName;
 
 	private String errorMessage;
 
@@ -93,12 +100,18 @@ public class HoptoadNoticeBuilder {
 	}
 
 	private void env(final String env) {
-		this.environment.put("RAILS_ENV", env);
+	    environmentName = env;
 	}
 
 	/** A hash of the environment data that existed when the error occurred (required, but can be empty). */
-	protected void environment(final Map environment) {
+	protected void environment(final Map<String, Object> environment) {
 		this.environment.putAll(environment);
+	}
+	
+	protected void environment(Properties properties) {
+	    for(Entry<Object,Object> property : properties.entrySet()) {
+	        this.environment.put(property.getKey().toString(), property.getValue());
+	    }
 	}
 
 	public void environmentFilter(final String filter) {
@@ -134,8 +147,8 @@ public class HoptoadNoticeBuilder {
 		ec2EnvironmentFilters();
 	}
 
-	public HoptoadNotice newNotice() {
-		return new HoptoadNotice(apiKey, errorMessage, errorClass, backtrace, request, session, environment, environmentFilters, hasRequest, url, component);
+    public HoptoadNotice newNotice() {
+		return new HoptoadNotice(apiKey, environmentName, errorMessage, errorClass, backtrace, request, session, environment, environmentFilters, hasRequest, url, component);
 	}
 
 	private boolean notDefined(final Object object) {
@@ -143,12 +156,12 @@ public class HoptoadNoticeBuilder {
 	}
 
 	/** A hash of the request parameters that were given when the error occurred (required, but can be empty). */
-	protected void request(final Map request) {
+	protected void request(final Map<String, Object> request) {
 		this.request = request;
 	}
 
 	/** A hash of the session data that existed when the error occurred (required, but can be empty). */
-	protected void session(final Map session) {
+	protected void session(final Map<String, Object> session) {
 		this.session.putAll(session);
 	}
 

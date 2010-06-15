@@ -4,13 +4,13 @@
 
 package code.lucamarrocco.hoptoad;
 
-import java.util.*;
+import static java.util.Arrays.asList;
 
-import static java.util.Arrays.*;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class HoptoadNotice {
-
-	private static final String RAILS_ENV = "RAILS_ENV";
 
 	private final String apiKey;
 
@@ -18,6 +18,8 @@ public class HoptoadNotice {
 
 	private Backtrace backtrace = new Backtrace(asList("backtrace is empty"));
 
+	private String environmentName;
+	
 	private final Map<String, Object> environment = new TreeMap<String, Object>();
 
 	private Map<String, Object> request = new TreeMap<String, Object>();
@@ -32,8 +34,9 @@ public class HoptoadNotice {
 
   private final String component;
 
-  public HoptoadNotice(final String apiKey, final String errorMessage, String errorClass, final Backtrace backtrace, final Map<String, Object> request, final Map<String, Object> session, final Map<String, Object> environment, final List<String> environmentFilters, boolean hasRequest, String url, String component) {
+  public HoptoadNotice(final String apiKey, String environmentName, final String errorMessage, String errorClass, final Backtrace backtrace, final Map<String, Object> request, final Map<String, Object> session, final Map<String, Object> environment, final List<String> environmentFilters, boolean hasRequest, String url, String component) {
 		this.apiKey = apiKey;
+		this.environmentName=environmentName;
 		this.errorClass = errorClass;
 		this.errorMessage = errorMessage;
 		this.backtrace = backtrace;
@@ -54,7 +57,7 @@ public class HoptoadNotice {
 	}
 
 	public String env() {
-		return (String) environment.get(RAILS_ENV);
+		return environmentName;
 	}
 
 	public Map<String, Object> environment() {

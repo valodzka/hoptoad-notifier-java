@@ -4,10 +4,10 @@
 
 package code.lucamarrocco.hoptoad;
 
-import org.junit.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertThat;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class NoticeApi2XmlTest {
   @Test
@@ -91,7 +91,6 @@ public class NoticeApi2XmlTest {
     return new RuntimeException("errorMessage");
   }
 
-  @SuppressWarnings({"ThrowableInstanceNeverThrown"})
   private String xml() {
     String env = "<blink>production</blink>";
     HoptoadNoticeBuilder builder = new HoptoadNoticeBuilder(HoptoadNotifierTest.KEY, newThrowable(), env);
