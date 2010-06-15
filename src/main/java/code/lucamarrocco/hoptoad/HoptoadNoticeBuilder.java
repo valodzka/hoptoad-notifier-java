@@ -17,6 +17,8 @@ public class HoptoadNoticeBuilder {
 
 	private String apiKey;
 	
+	private String projectRoot;
+	
 	private String environmentName;
 
 	private String errorMessage;
@@ -66,6 +68,11 @@ public class HoptoadNoticeBuilder {
 		this(apiKey, new Backtrace(), throwable, env);
 	}
 
+  public HoptoadNoticeBuilder(final String apiKey, final Throwable throwable, final String projectRoot, final String env) {
+                this(apiKey, new Backtrace(), throwable, env);
+                projectRoot(projectRoot);
+        }
+
   private void apiKey(final String apiKey) {
 		if (notDefined(apiKey)) {
 			error("The API key for the project this error is from (required). Get this from the project's page in Hoptoad.");
@@ -99,6 +106,10 @@ public class HoptoadNoticeBuilder {
 		environmentFilter("EC2_CERT");
 	}
 
+	protected void projectRoot(final String projectRoot) {
+	    this.projectRoot = projectRoot;
+	}
+	
 	private void env(final String env) {
 	    environmentName = env;
 	}
@@ -148,7 +159,7 @@ public class HoptoadNoticeBuilder {
 	}
 
     public HoptoadNotice newNotice() {
-		return new HoptoadNotice(apiKey, environmentName, errorMessage, errorClass, backtrace, request, session, environment, environmentFilters, hasRequest, url, component);
+		return new HoptoadNotice(apiKey, projectRoot, environmentName, errorMessage, errorClass, backtrace, request, session, environment, environmentFilters, hasRequest, url, component);
 	}
 
 	private boolean notDefined(final Object object) {

@@ -47,6 +47,7 @@ public class NoticeApi2 {
 
       server_environment();
       {
+        tag("project-root", notice.projectRoot());
         tag("environment-name", notice.env());
       }
       end("server-environment");

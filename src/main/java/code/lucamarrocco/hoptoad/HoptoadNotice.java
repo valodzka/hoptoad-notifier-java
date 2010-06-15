@@ -18,6 +18,8 @@ public class HoptoadNotice {
 
 	private Backtrace backtrace = new Backtrace(asList("backtrace is empty"));
 
+	private String projectRoot;
+	
 	private String environmentName;
 	
 	private final Map<String, Object> environment = new TreeMap<String, Object>();
@@ -33,9 +35,10 @@ public class HoptoadNotice {
   private final String url;
 
   private final String component;
-
-  public HoptoadNotice(final String apiKey, String environmentName, final String errorMessage, String errorClass, final Backtrace backtrace, final Map<String, Object> request, final Map<String, Object> session, final Map<String, Object> environment, final List<String> environmentFilters, boolean hasRequest, String url, String component) {
+  
+  public HoptoadNotice(final String apiKey, String projectRoot, String environmentName, final String errorMessage, String errorClass, final Backtrace backtrace, final Map<String, Object> request, final Map<String, Object> session, final Map<String, Object> environment, final List<String> environmentFilters, boolean hasRequest, String url, String component) {
 		this.apiKey = apiKey;
+		this.projectRoot = projectRoot;
 		this.environmentName=environmentName;
 		this.errorClass = errorClass;
 		this.errorMessage = errorMessage;
@@ -106,4 +109,8 @@ public class HoptoadNotice {
   public String component() {
     return component;
   }
+
+    public String projectRoot() {
+        return projectRoot;
+    }
 }
