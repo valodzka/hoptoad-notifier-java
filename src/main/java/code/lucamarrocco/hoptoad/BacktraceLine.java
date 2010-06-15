@@ -4,7 +4,9 @@
 
 package code.lucamarrocco.hoptoad;
 
-import static java.text.MessageFormat.*;
+import static java.text.MessageFormat.format;
+
+import org.apache.commons.lang.StringEscapeUtils;
 
 public class BacktraceLine {
 
@@ -26,9 +28,9 @@ public class BacktraceLine {
         else {
             className = classAndMethodName;
         }
-		fileName = escapeSpecialChars(line.replaceAll("^.*\\(", "").replaceAll(":.*", ""));
+		fileName = line.replaceAll("^.*\\(", "").replaceAll(":.*", "");
 		lineNumber = lineNumber(line);
-		methodName = classAndMethodName.substring(classAndMethodName.lastIndexOf(".") + 1);
+		methodName =  classAndMethodName.substring(classAndMethodName.lastIndexOf(".") + 1);
 	}
 
 	public BacktraceLine(String className, String fileName, int lineNumber, String methodName) {
@@ -38,15 +40,16 @@ public class BacktraceLine {
 		this.methodName = methodName;
 	}
 
-	public String className() {
+	// exposed for unit testing
+	String className() {
 		return className;
 	}
 
-	public String fileName() {
+	String fileName() {
 		return fileName;
 	}
 
-	public int lineNumber() {
+	int lineNumber() {
 		return lineNumber;
 	}
 
@@ -66,18 +69,16 @@ public class BacktraceLine {
 		return format("at {0}.{1}({2}:{3})", className, methodName, fileName, lineNumber);
 	}
 	
-	private String escapeSpecialChars(final String str) {
-		return str.replaceAll("&", "&amp;")
-					.replaceAll("<", "&lt;")
-					.replaceAll(">", "&gt;");
-	}
-
 	@Override
 	public String toString() {
 		return toBacktrace(className, fileName, lineNumber, methodName);
 	}
 
 	public String toXml() {
-		return format("<line method=\"{0}.{1}\" file=\"{2}\" number=\"{3}\"/>", className, methodName, fileName, lineNumber);
+		return format("<line method=\"{0}.{1}\" file=\"{2}\" number=\"{3}\"/>",
+		        StringEscapeUtils.escapeXml(className),
+		        StringEscapeUtils.escapeXml(methodName),
+		        StringEscapeUtils.escapeXml(fileName),
+		        lineNumber);
 	}
 }

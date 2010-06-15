@@ -1,8 +1,8 @@
 package code.lucamarrocco.hoptoad;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.*;
+import org.junit.Test;
 
 public class BacktraceLineTest {
 
@@ -28,8 +28,8 @@ public class BacktraceLineTest {
 	}
 	
 	@Test
-	public void testEscapeSpecialCharsInFileName() {
-		BacktraceLine backtraceLine = new BacktraceLine("at com.company.Foo$$FastClassByCGLIB$$b505b4f2.invoke(<generated>:-1)");
-		assertEquals("&lt;generated&gt;", backtraceLine.fileName());
+	public void testEscapeSpecialCharsInXml() {
+		BacktraceLine backtraceLine = new BacktraceLine("at com.company.Foo$$FastClassByCGLIB$$b505b4f2.invoke(<generated'\">:-1)");
+		assertEquals("<line method=\"com.company.Foo$$FastClassByCGLIB$$b505b4f2.invoke\" file=\"&lt;generated&apos;&quot;&gt;\" number=\"-1\"/>", backtraceLine.toXml());
 	}
 }

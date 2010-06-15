@@ -4,7 +4,9 @@
 
 package code.lucamarrocco.hoptoad;
 
-import java.util.*;
+import java.util.Map;
+
+import org.apache.commons.lang.StringEscapeUtils;
 
 public class NoticeApi2 {
 
@@ -133,12 +135,7 @@ public class NoticeApi2 {
 	}
 
 	private NoticeApi2 text(String string) {
-    if (string != null) {
-      string = string.replaceAll("<", "&lt;");
-      string = string.replaceAll(">", "&gt;");
-    }
-
-		append(string);
+		append(StringEscapeUtils.escapeXml(string));
 		return this;
 	}
 
