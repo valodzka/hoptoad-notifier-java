@@ -135,6 +135,9 @@ public class HoptoadNoticeBuilder {
 
 	private void errorClass(Throwable throwable) {
 		this.errorClass = throwable.getClass().getName();
+        if (errorMessage == null || errorMessage.trim().isEmpty()) {
+            errorMessage = '[' + throwable.getClass().toString() + ']';
+        }
 	}
 
 	protected boolean errorClassIs(String possibleErrorClass) {
