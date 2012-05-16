@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.skype</groupId>
+  <artifactId>skypekit</artifactId>
+  <name>Skype Kit</name>
+  <version>3.7.0</version>
+  <url>http://skype.com</url>
+  <distributionManagement>
+    <status>deployed</status>
+  </distributionManagement>
+</project>
