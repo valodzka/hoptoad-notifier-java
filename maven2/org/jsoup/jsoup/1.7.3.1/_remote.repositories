@@ -1,0 +1,6 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Thu Jul 03 18:47:32 FET 2014
+jsoup-1.7.3.1-javadoc.jar>=
+jsoup-1.7.3.1.pom>=
+jsoup-1.7.3.1-sources.jar>=
+jsoup-1.7.3.1.jar>=
