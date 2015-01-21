@@ -1,0 +1,5 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Wed Jan 21 16:12:50 FET 2015
+joda-time-y-2.3.6.jar>=
+joda-time-y-2.3.6.pom>=
+joda-time-y-2.3.6-sources.jar>=
